@@ -133,20 +133,18 @@
             // labelTest
             // 
             this.labelTest.AutoSize = true;
-            this.labelTest.Location = new System.Drawing.Point(395, 272);
+            this.labelTest.Location = new System.Drawing.Point(9, 259);
             this.labelTest.Name = "labelTest";
-            this.labelTest.Size = new System.Drawing.Size(58, 13);
+            this.labelTest.Size = new System.Drawing.Size(0, 13);
             this.labelTest.TabIndex = 15;
-            this.labelTest.Text = "Manhattan";
             // 
             // labelTest2
             // 
             this.labelTest2.AutoSize = true;
-            this.labelTest2.Location = new System.Drawing.Point(398, 295);
+            this.labelTest2.Location = new System.Drawing.Point(12, 282);
             this.labelTest2.Name = "labelTest2";
-            this.labelTest2.Size = new System.Drawing.Size(47, 13);
+            this.labelTest2.Size = new System.Drawing.Size(0, 13);
             this.labelTest2.TabIndex = 16;
-            this.labelTest2.Text = "Euklides";
             // 
             // pictureBoxNajR
             // 
@@ -166,7 +164,7 @@
             // 
             // pictureBoxNajB
             // 
-            this.pictureBoxNajB.Location = new System.Drawing.Point(541, 314);
+            this.pictureBoxNajB.Location = new System.Drawing.Point(532, 314);
             this.pictureBoxNajB.Name = "pictureBoxNajB";
             this.pictureBoxNajB.Size = new System.Drawing.Size(259, 230);
             this.pictureBoxNajB.TabIndex = 19;
@@ -175,11 +173,10 @@
             // labelTestNazwa
             // 
             this.labelTestNazwa.AutoSize = true;
-            this.labelTestNazwa.Location = new System.Drawing.Point(26, 281);
+            this.labelTestNazwa.Location = new System.Drawing.Point(532, 298);
             this.labelTestNazwa.Name = "labelTestNazwa";
-            this.labelTestNazwa.Size = new System.Drawing.Size(35, 13);
+            this.labelTestNazwa.Size = new System.Drawing.Size(0, 13);
             this.labelTestNazwa.TabIndex = 20;
-            this.labelTestNazwa.Text = "label1";
             // 
             // Form1
             // 

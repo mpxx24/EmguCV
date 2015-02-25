@@ -1,15 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Emgu.CV;
-using Emgu.CV.Util;
 using Emgu.CV.Structure;
 using ZedGraph;
 
@@ -17,15 +11,15 @@ namespace projekt_ECV
 {
     public partial class Form1 : Form
     {
-
         private const string SciezkaFolderZeZdjeciami = @"C:\Users\Mariusz\Desktop\test\";
+
         public Form1()
         {
             InitializeComponent();
 
             var dInfo = new DirectoryInfo(SciezkaFolderZeZdjeciami);
-            var pliki = dInfo.GetFiles();
-            foreach (var plik in pliki)
+            FileInfo[] pliki = dInfo.GetFiles();
+            foreach (FileInfo plik in pliki)
             {
                 pictureList.Items.Add(plik);
             }
@@ -33,9 +27,9 @@ namespace projekt_ECV
 
         private void pictureList_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var zdjecie = pictureList.SelectedItem.ToString();
-            var pelnaSciezka = SciezkaFolderZeZdjeciami + zdjecie;
-            var image = Image.FromFile(pelnaSciezka);
+            string zdjecie = pictureList.SelectedItem.ToString();
+            string pelnaSciezka = SciezkaFolderZeZdjeciami + zdjecie;
+            Image image = Image.FromFile(pelnaSciezka);
             var histogramImage = new Image<Bgr, Byte>(pelnaSciezka);
             //var hsvImage = histogramImage.Convert<Hsv, Byte>();
 
@@ -56,27 +50,27 @@ namespace projekt_ECV
             float[] GreenHist;
             float[] RedHist;
 
-            Image<Bgr, Byte> img = new Image<Bgr, byte>(pelnaSciezka);
+            var img = new Image<Bgr, byte>(pelnaSciezka);
 
-            DenseHistogram Histo = new DenseHistogram(255, new RangeF(0, 255));
+            var Histo = new DenseHistogram(255, new RangeF(0, 255));
 
             Image<Gray, Byte> img2Blue = img[0];
             Image<Gray, Byte> img2Green = img[1];
             Image<Gray, Byte> img2Red = img[2];
 
-            Histo.Calculate(new Image<Gray, Byte>[] { img2Blue }, true, null);
+            Histo.Calculate(new[] {img2Blue}, true, null);
             BlueHist = new float[256];
             Histo.MatND.ManagedArray.CopyTo(BlueHist, 0);
 
             Histo.Clear();
 
-            Histo.Calculate(new Image<Gray, Byte>[] { img2Green }, true, null);
+            Histo.Calculate(new[] {img2Green}, true, null);
             GreenHist = new float[256];
             Histo.MatND.ManagedArray.CopyTo(GreenHist, 0);
 
             Histo.Clear();
 
-            Histo.Calculate(new Image<Gray, Byte>[] { img2Red }, true, null);
+            Histo.Calculate(new[] {img2Red}, true, null);
             RedHist = new float[256];
             Histo.MatND.ManagedArray.CopyTo(RedHist, 0);
 
@@ -84,7 +78,7 @@ namespace projekt_ECV
 
             #region narusyj histogram
 
-            var mPane = zedGraph.GraphPane;
+            GraphPane mPane = zedGraph.GraphPane;
 
             mPane.Title.Text = "RGB";
             var czerwony = new PointPairList();
@@ -99,9 +93,9 @@ namespace projekt_ECV
             }
 
             mPane.CurveList.Clear();
-            var wykresR = mPane.AddCurve("R", czerwony, Color.Red, SymbolType.Default);
-            var wykresG = mPane.AddCurve("R", zielony, Color.Green, SymbolType.Default);
-            var wykresB = mPane.AddCurve("R", niebieski, Color.Blue, SymbolType.Default);
+            LineItem wykresR = mPane.AddCurve("R", czerwony, Color.Red, SymbolType.Default);
+            LineItem wykresG = mPane.AddCurve("R", zielony, Color.Green, SymbolType.Default);
+            LineItem wykresB = mPane.AddCurve("R", niebieski, Color.Blue, SymbolType.Default);
 
             zedGraph.AxisChange();
             zedGraph.Refresh();
@@ -110,19 +104,19 @@ namespace projekt_ECV
 
             #region (uboga) kwantyzacja
 
-            var wielkoscPrzedialu = 4;
-            var aktualnaPozycjaR = 0;
-            var aktualnaPozycjaG = 0;
-            var aktualnaPozycjaB = 0;
+            int wielkoscPrzedialu = 4;
+            int aktualnaPozycjaR = 0;
+            int aktualnaPozycjaG = 0;
+            int aktualnaPozycjaB = 0;
             float wartoscR = 0;
             float wartoscG = 0;
             float wartoscB = 0;
-            var RedHistQ = new float[RedHist.Length / wielkoscPrzedialu];
-            var GreenHistQ = new float[GreenHist.Length / wielkoscPrzedialu];
-            var BlueHistQ = new float[BlueHist.Length / wielkoscPrzedialu];
+            var RedHistQ = new float[RedHist.Length/wielkoscPrzedialu];
+            var GreenHistQ = new float[GreenHist.Length/wielkoscPrzedialu];
+            var BlueHistQ = new float[BlueHist.Length/wielkoscPrzedialu];
 
 
-            for (int i = 0; i < RedHist.Length / wielkoscPrzedialu; i++)
+            for (int i = 0; i < RedHist.Length/wielkoscPrzedialu; i++)
             {
                 for (int j = 0; j < wielkoscPrzedialu; j++)
                 {
@@ -132,7 +126,7 @@ namespace projekt_ECV
                 wartoscR = 0;
                 aktualnaPozycjaR++;
             }
-            for (int i = 0; i < GreenHist.Length / wielkoscPrzedialu; i++)
+            for (int i = 0; i < GreenHist.Length/wielkoscPrzedialu; i++)
             {
                 for (int j = 0; j < wielkoscPrzedialu; j++)
                 {
@@ -142,7 +136,7 @@ namespace projekt_ECV
                 wartoscG = 0;
                 aktualnaPozycjaG++;
             }
-            for (int i = 0; i < BlueHist.Length / wielkoscPrzedialu; i++)
+            for (int i = 0; i < BlueHist.Length/wielkoscPrzedialu; i++)
             {
                 for (int j = 0; j < wielkoscPrzedialu; j++)
                 {
@@ -153,9 +147,9 @@ namespace projekt_ECV
                 aktualnaPozycjaB++;
             }
 
-            var mPane2 = zedGraphQ.GraphPane;
+            GraphPane mPane2 = zedGraphQ.GraphPane;
 
-            mPane2.Title.Text = "RGB";
+            mPane2.Title.Text = "RGB kwant.";
             var czerwonyQ = new PointPairList();
             var zielonyQ = new PointPairList();
             var niebieskiQ = new PointPairList();
@@ -168,61 +162,53 @@ namespace projekt_ECV
             }
 
             mPane2.CurveList.Clear();
-            var wykresRQ = mPane2.AddCurve("R", czerwonyQ, Color.Red, SymbolType.Default);
-            var wykresGQ = mPane2.AddCurve("G", zielonyQ, Color.Green, SymbolType.Default);
-            var wykresBQ = mPane2.AddCurve("B", niebieskiQ, Color.Blue, SymbolType.Default);
+            LineItem wykresRQ = mPane2.AddCurve("R", czerwonyQ, Color.Red, SymbolType.Default);
+            LineItem wykresGQ = mPane2.AddCurve("G", zielonyQ, Color.Green, SymbolType.Default);
+            LineItem wykresBQ = mPane2.AddCurve("B", niebieskiQ, Color.Blue, SymbolType.Default);
 
             zedGraphQ.AxisChange();
             zedGraphQ.Refresh();
 
-
-
-
             #endregion
-
         }
 
         private void odleglosciButton_Click(object sender, EventArgs e)
         {
             var img = new Image<Bgr, byte>(@"C:\Users\Mariusz\Desktop\prAG\ucid00443.tif");
             var img2 = new Image<Bgr, byte>(@"C:\Users\Mariusz\Desktop\prAG\ucid00668.tif");
-            var histogram1 = new mHistogram(img);
-            var histogram2 = new mHistogram(img2);
-
             var met = new Metody();
-            var wynik = met.porownajHistogramyManhattan(histogram1, histogram2);
-            var wynik2 = met.porownajHistogramyEuklides(histogram1, histogram2);
+            List<float> wynik = met.odlegloscMiedzyHistogramami(img, img2);
 
-            labelTest.Text += " R: " + wynik[2] + ", G: " + wynik[1] + ", B: " + wynik[0];
-            labelTest2.Text += " R: " + wynik[2] + ", G: " + wynik[1] + ", B: " + wynik[0];
+            labelTest.Text = "Manhattan: R: " + wynik[2] + ", G: " + wynik[1] + ", B: " + wynik[0];
+            labelTest2.Text = "Euklides R: " + wynik[5] + ", G: " + wynik[4] + ", B: " + wynik[3];
         }
 
         private void porownanieButton_Click(object sender, EventArgs e)
         {
-            var zaznaczenie = pictureList.SelectedItem.ToString();
-            var pelnaSciezka = SciezkaFolderZeZdjeciami + zaznaczenie;
+            string zaznaczenie = pictureList.SelectedItem.ToString();
+            string pelnaSciezka = SciezkaFolderZeZdjeciami + zaznaczenie;
             var img = new Image<Bgr, byte>(pelnaSciezka);
             var histogram1 = new mHistogram(img);
             var met = new Metody();
 
             var dInfo = new DirectoryInfo(SciezkaFolderZeZdjeciami);
-            var pliki = dInfo.GetFiles();
+            FileInfo[] pliki = dInfo.GetFiles();
             //float najmniejszaRoznicaR = 1000000000;
             //float najmniejszaRoznicaG = 1000000000;
             float najmniejszaRoznicaB = 1000000000;
             //mHistogram najR = new mHistogram(img);
             //mHistogram najG = new mHistogram(img);
-            mHistogram najB = new mHistogram(img);
+            var najB = new mHistogram(img);
 
-            foreach (var plik in pliki)
+            foreach (FileInfo plik in pliki)
             {
                 //using (
                 var img2 = new Image<Bgr, Byte>(plik.FullName);
                 //{
                 var histogram2 = new mHistogram(img2);
-                var wynik = met.porownajHistogramyManhattan(histogram1, histogram2);
+                List<float> wynik = met.porownajHistogramyEuklides(histogram1, histogram2);
 
-                var srednia = (wynik[0] + wynik[1] + wynik[2])/3;
+                float srednia = (wynik[0] + wynik[1] + wynik[2])/3;
 
                 if (srednia < najmniejszaRoznicaB)
                 {
@@ -250,14 +236,16 @@ namespace projekt_ECV
                 //    }
                 //}
                 //}
-
             }
+
+            List<float> odleglosci = met.odlegloscMiedzyHistogramami(img, najB.Obraz);
+            labelTest.Text = "Manhattan R: " + odleglosci[2] + ", G: " + odleglosci[1] + ", B: " + odleglosci[0];
+            labelTest2.Text = "Euklides R: " + odleglosci[5] + ", G: " + odleglosci[4] + ", B: " + odleglosci[3];
 
             pictureBox.Image = img.Bitmap;
             //pictureBoxNajR.Image = najR.Obraz.Bitmap;
             //pictureBoxNajG.Image = najG.Obraz.Bitmap;
             pictureBoxNajB.Image = najB.Obraz.Bitmap;
-
         }
     }
 }
